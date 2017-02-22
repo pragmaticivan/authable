@@ -16,7 +16,6 @@ defmodule Authable.AuthStrategy.SessionTest do
 
   @secret String.duplicate("abcdef0123456789", 8)
   @signing_opts Plug.Session.init(Keyword.put(@default_opts, :encrypt, false))
-  @encrypted_opts Plug.Session.init(@default_opts)
 
   setup do
     {:ok, conn: Authable.ConnTest.build_conn()}

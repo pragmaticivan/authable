@@ -5,6 +5,7 @@ defmodule Authable.Plug.Authenticate do
   """
 
   import Plug.Conn
+  alias Authable.Helper
 
   @behaviour Plug
   @renderer Application.get_env(:authable, :renderer)
@@ -55,8 +56,7 @@ defmodule Authable.Plug.Authenticate do
       end
   """
   def call(conn, scopes) do
-    response_conn_with(conn, Authable.Helper.authorize_for_resource(conn,
-      scopes))
+    response_conn_with(conn, Helper.authorize_for_resource(conn, scopes))
   end
 
   defp response_conn_with(conn, nil) do

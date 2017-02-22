@@ -3,10 +3,8 @@ defmodule Authable.OAuth2Test do
   use Authable.Rollbackable
   use Authable.RepoCase
   import Authable.Factory
-  import Ecto.Query, only: [where: 2]
   alias Authable.OAuth2
   alias Authable.Error.SuspiciousActivity, as: SuspiciousActivityError
-  alias Authable.Authorization.App, as: AppAuthorization
 
   @redirect_uri "https://xyz.com/rd"
   @scopes "read"

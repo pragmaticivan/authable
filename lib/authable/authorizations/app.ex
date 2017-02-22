@@ -86,9 +86,10 @@ defmodule Authable.Authorization.App do
         |> Enum.concat(Authable.Utils.String.comma_split(app.scope))
         |> Enum.uniq()
       scope = @scopes -- (@scopes -- scope)
-      app = @repo.update!(@app.changeset(app, %{scope: Enum.join(scope, ",")}))
+      @repo.update!(@app.changeset(app, %{scope: Enum.join(scope, ",")}))
+    else
+      app
     end
-    app
   end
 
   defp create_app(%{"user" => user, "client_id" => client_id, "scope" => scope}) do

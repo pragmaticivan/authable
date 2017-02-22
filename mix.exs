@@ -8,10 +8,10 @@ defmodule Authable.Mixfile do
      elixirc_paths: elixirc_paths(Mix.env),
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
-     aliases: aliases,
-     description: description,
-     package: package,
-     deps: deps,
+     aliases: aliases(),
+     description: description(),
+     package: package(),
+     deps: deps(),
      docs: [extras: ["README.md"]]]
   end
 
@@ -44,7 +44,7 @@ defmodule Authable.Mixfile do
       {:plug, "~> 1.0 or ~> 1.1 or ~> 1.2 or ~> 1.3"},
       {:poison, "~> 2.0 or ~> 2.1 or ~> 2.2 or ~> 3.0 or ~> 3.1"},
       {:ex_machina, "~> 1.0.2", only: :test},
-      {:credo, "~> 0.5", only: [:dev, :test]},
+      {:credo, "~> 0.6", only: [:dev, :test]},
       {:ex_doc, "~> 0.14", only: :dev}
     ]
   end
