@@ -7,7 +7,6 @@ defmodule Authable.Plug.Authenticate do
   import Plug.Conn
   alias Authable.Helper
 
-  @behaviour Plug
   @renderer Application.get_env(:authable, :renderer)
 
   def init(opts) do

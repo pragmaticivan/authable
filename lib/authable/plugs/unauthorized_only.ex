@@ -6,7 +6,6 @@ defmodule Authable.Plug.UnauthorizedOnly do
   import Plug.Conn
   alias Authable.Helper
 
-  @behaviour Plug
   @renderer Application.get_env(:authable, :renderer)
 
   def init([]), do: false

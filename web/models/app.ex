@@ -8,7 +8,6 @@ defmodule Authable.Model.App do
 
   @resource_owner Application.get_env(:authable, :resource_owner)
   @client Application.get_env(:authable, :client)
-  @app Application.get_env(:authable, :app)
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -18,7 +17,7 @@ defmodule Authable.Model.App do
     belongs_to :client, @client
     belongs_to :user, @resource_owner
 
-    timestamps
+    timestamps()
   end
 
   @doc """

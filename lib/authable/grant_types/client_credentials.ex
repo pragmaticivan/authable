@@ -8,7 +8,6 @@ defmodule Authable.GrantType.ClientCredentials do
 
   @behaviour Authable.GrantType
   @repo Application.get_env(:authable, :repo)
-  @resource_owner Application.get_env(:authable, :resource_owner)
   @client Application.get_env(:authable, :client)
   @scopes Enum.join(Application.get_env(:authable, :scopes), ",")
 
@@ -59,10 +58,8 @@ defmodule Authable.GrantType.ClientCredentials do
   defp create_oauth2_tokens({:error, err, code}, _),
     do: {:error, err, code}
   defp create_oauth2_tokens({:ok, client}, scopes),
-    do: create_oauth2_tokens(client.user_id, grant_type, client.id, scopes)
+    do: create_oauth2_tokens(client.user_id, grant_type(), client.id, scopes)
 
-  defp validate_token_scope({:error, err, code}, _),
-    do: {:error, err, code}
   defp validate_token_scope({:ok, client}, ""),
     do: {:ok, client}
   defp validate_token_scope({:ok, client}, required_scopes) do

@@ -15,15 +15,16 @@ defmodule Authable.AuthStrategy.QueryParam do
   `{:error, Map, :http_status_code}` on fails.
   """
   def authenticate(conn, required_scopes) do
-    if @query_params_auth,
-      do: authenticate_via_query_params(@query_params_auth, conn.query_params,
+    unless is_nil(@query_params_auth) do
+      authenticate_via_query_params(@query_params_auth, conn.query_params,
         required_scopes)
+    end
   end
 
   def authenticate(conn) do
-    if @query_params_auth,
-      do: authenticate_via_query_params(@query_params_auth, conn.query_params,
-        [])
+    unless is_nil(@query_params_auth) do
+      authenticate_via_query_params(@query_params_auth, conn.query_params, [])
+    end
   end
 
   defp authenticate_via_query_params(query_params_auth, params, required_scopes) do

@@ -1,5 +1,5 @@
 defmodule Authable.OAuth2Test do
-  use ExUnit.Case, async: false
+  use ExUnit.Case
   use Authable.Rollbackable
   use Authable.RepoCase
   import Authable.Factory

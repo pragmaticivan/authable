@@ -45,7 +45,8 @@ defmodule Authable.Mixfile do
       {:poison, "~> 2.0 or ~> 2.1 or ~> 2.2 or ~> 3.0 or ~> 3.1"},
       {:ex_machina, "~> 1.0.2", only: :test},
       {:credo, "~> 0.6", only: [:dev, :test]},
-      {:ex_doc, "~> 0.14", only: :dev}
+      {:ex_doc, "~> 0.14", only: :dev},
+      {:dialyxir, "~> 0.4", only: [:dev], runtime: false}
     ]
   end
 
