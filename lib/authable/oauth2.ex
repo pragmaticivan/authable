@@ -3,14 +3,8 @@ defmodule Authable.OAuth2 do
   OAuth2 authorization strategy router
   """
 
-  import Ecto.Query, only: [from: 2]
-
-  @repo Application.get_env(:authable, :repo)
-  @token_store Application.get_env(:authable, :token_store)
-  @client Application.get_env(:authable, :client)
-  @app Application.get_env(:authable, :app)
   @grant_types Application.get_env(:authable, :grant_types)
-  @scopes Application.get_env(:authable, :scopes)
+  @app_authorization Application.get_env(:authable, :app_authorization, Authable.Authorization.App)
 
   @doc """
   Calls appropriate module authorize function for given grant type.
@@ -71,41 +65,25 @@ defmodule Authable.OAuth2 do
   ## Examples
 
       # For authorization_code grant type
-      Authable.OAuth2.authorize_app(user, %{
+      Authable.OAuth2.grant_app_authorization(user, %{
         "client_id" => "52024ca6-cf1d-4a9d-bfb6-9bc5023ad56e",
         "redirect_uri" => "http://localhost:4000/oauth2/callbacks",
         "scope" => "read,write"
       %})
   """
-  def authorize_app(user, %{"client_id" => client_id, "redirect_uri" => redirect_uri, "scope" => scope}) do
-    client = @repo.get_by(@client, id: client_id, redirect_uri: redirect_uri)
-    authorize_app(user, client, scope)
+  def grant_app_authorization(user, %{"client_id" => client_id, "redirect_uri" => redirect_uri, "scope" => scope}) do
+    @app_authorization.grant(%{"user" => user, "client_id" => client_id,
+      "redirect_uri" => redirect_uri, "scope" => scope})
   end
 
-  defp authorize_app(_, nil, _), do: {:error,
-   %{invalid_client: "Client not found"}, :unprocessable_entity}
-  defp authorize_app(user, client, scope) do
-    app = @repo.get_by(@app, user_id: user.id, client_id: client.id)
-    authorize_app(user, client, app, scope)
-  end
-  defp authorize_app(user, client, nil, scope) do
-    @repo.insert!(@app.changeset(%@app{}, %{
-      user_id: user.id,
-      client_id: client.id,
-      scope: scope
-    }))
-  end
-  defp authorize_app(_, _, app, scope) do
-    if app.scope != scope do
-      scope = scope
-      |> Authable.Utils.String.comma_split
-      |> Enum.concat(Authable.Utils.String.comma_split(app.scope))
-      |> Enum.uniq()
-      scope = @scopes -- (@scopes -- scope)
-      @repo.update!(@app.changeset(app, %{scope: Enum.join(scope, ",")}))
-    else
-      app
-    end
+  @doc """
+  Warning: Deprecated use grant_app_authorization/2.
+  """
+  def authorize_app(user, %{"client_id" => client_id, "redirect_uri" => redirect_uri, "scope" => scope}) do
+    require Logger
+    Logger.warn("Warning: Deprecated use OAuth2.grant_app_authorization/2")
+    @app_authorization.grant(%{"user" => user, "client_id" => client_id,
+      "redirect_uri" => redirect_uri, "scope" => scope})
   end
 
   @doc """
@@ -121,12 +99,7 @@ defmodule Authable.OAuth2 do
       %})
   """
   def revoke_app_authorization(user, %{"id" => id}) do
-    app = @repo.get_by!(@app, id: id, user_id: user.id)
-    @repo.delete!(app)
-
-    query = (from t in @token_store, where: t.user_id == ^app.user_id and
-      fragment("?->>'client_id' = ?", t.details, ^app.client_id))
-    @repo.delete_all(query)
+    @app_authorization.revoke(%{"user" => user, "id" => id})
   end
 
   defp strategy_check(grant_type) do
