@@ -17,8 +17,9 @@ defmodule Authable.AuthStrategy.Session do
   `{:error, Map, :http_status_code}` on fails.
   """
   def authenticate(conn, required_scopes) do
-    if @session_auth, do: authenticate_via_session(conn, @session_auth,
-      required_scopes)
+    unless is_nil(@session_auth) do
+      authenticate_via_session(conn, @session_auth, required_scopes)
+    end
   end
 
   defp authenticate_via_session(conn, session_auth, required_scopes) do

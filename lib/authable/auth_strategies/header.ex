@@ -17,7 +17,9 @@ defmodule Authable.AuthStrategy.Header do
   `{:error, Map, :http_status_code}` on fails.
   """
   def authenticate(conn, required_scopes) do
-    if @header_auth, do: authenticate(conn, @header_auth, required_scopes)
+    unless is_nil(@header_auth) do
+      authenticate(conn, @header_auth, required_scopes)
+    end
   end
 
   defp authenticate(conn, header_auth, required_scopes) do

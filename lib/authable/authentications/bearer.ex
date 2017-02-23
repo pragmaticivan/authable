@@ -43,11 +43,14 @@ defmodule Authable.Authentication.Bearer do
 
   defp error_headers(errors) do
     error_message = generate_error_header_message(errors)
-    [%{"www-authenticate" => "Bearer realm=\"authable\", ${error_message}"}]
+    [%{"www-authenticate" => "Bearer realm=\"authable\", #{error_message}"}]
   end
 
   defp generate_error_header_message(errors) do
-    "error=\"${Map.keys(errors)}\",
-      error_description=\"${Map.values(errors)}\""
+    {error, error_message} =
+      errors
+      |> Map.to_list()
+      |> List.first()
+    "error=\"#{error}\", error_description=\"#{error_message}\""
   end
 end

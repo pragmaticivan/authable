@@ -4,8 +4,8 @@ defmodule Authable.Plug.UnauthorizedOnly do
   """
 
   import Plug.Conn
+  alias Authable.Helper
 
-  @behaviour Plug
   @renderer Application.get_env(:authable, :renderer)
 
   def init([]), do: false
@@ -25,7 +25,7 @@ defmodule Authable.Plug.UnauthorizedOnly do
       end
   """
   def call(conn, _opts) do
-    response_conn_with(conn, Authable.Helper.authorize_for_resource(conn, []))
+    response_conn_with(conn, Helper.authorize_for_resource(conn, []))
   end
 
   defp response_conn_with(conn, nil), do: conn

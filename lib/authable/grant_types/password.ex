@@ -67,7 +67,7 @@ defmodule Authable.GrantType.Password do
   defp create_oauth2_tokens({:error, err, code}, _, _), do: {:error, err, code}
   defp create_oauth2_tokens({:ok, user}, client, scopes) do
     create_oauth2_tokens(
-      user.id, grant_type, client.id, scopes, client.redirect_uri)
+      user.id, grant_type(), client.id, scopes, client.redirect_uri)
   end
 
   defp validate_token_scope({:error, err, code}, _), do: {:error, err, code}
@@ -82,7 +82,6 @@ defmodule Authable.GrantType.Password do
     end
   end
 
-  defp match_with_user_password({:error, err, code}, _), do: {:error, err, code}
   defp match_with_user_password({:ok, user}, password) do
     if CryptUtil.match_password(password, Map.get(user, :password, "")) do
       {:ok, user}

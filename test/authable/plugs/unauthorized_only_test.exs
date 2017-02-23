@@ -1,9 +1,7 @@
 defmodule Authable.Plug.UnauthorizedOnlyTest do
   use ExUnit.Case
   use Plug.Test
-  use Authable.Rollbackable
-  use Authable.ModelCase
-  use Authable.ConnCase
+  use Authable.{Rollbackable, ModelCase, ConnCase}
   import Authable.Factory
   alias Authable.Plug.UnauthorizedOnly, as: UnauthorizedOnlyPlug
 
@@ -17,7 +15,6 @@ defmodule Authable.Plug.UnauthorizedOnlyTest do
 
   @secret String.duplicate("abcdef0123456789", 8)
   @signing_opts Plug.Session.init(Keyword.put(@default_opts, :encrypt, false))
-  @encrypted_opts Plug.Session.init(@default_opts)
 
   setup do
     {:ok, conn: Authable.ConnTest.build_conn()}
