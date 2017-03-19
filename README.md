@@ -1,4 +1,7 @@
-# Authable
+# 🚪 Authable
+
+[![Build Status](https://travis-ci.org/mustafaturan/authable.svg?branch=master)](https://travis-ci.org/mustafaturan/authable)
+[![Deps Status](https://beta.hexfaktor.org/badge/all/github/mustafaturan/authable.svg)](https://beta.hexfaktor.org/github/mustafaturan/authable)
 
 OAuth2 Provider implementation modules and helpers using `plug`, `ecto` and `postgress` for any `elixir` application.
 
@@ -10,62 +13,62 @@ The package can be installed as:
 
   Only for ecto versions > 2.0
 
-    ```elixir
-    def deps do
-      [{:authable, "~> 0.8.0"}]
-    end
-    ```
+```elixir
+def deps do
+  [{:authable, "~> 0.8.0"}]
+end
+```
 
   2. Ensure authable is started before your application:
 
-    ```elixir
-    def application do
-      [applications: [:authable]]
-    end
-    ```
+```elixir
+def application do
+  [applications: [:authable]]
+end
+```
 
   3. Add authable configurations to your `config/config.exs` file:
 
-    ```elixir
-    config :authable,
-      ecto_repos: [Authable.Repo],
-      repo: Authable.Repo,
-      resource_owner: Authable.Model.User,
-      token_store: Authable.Model.Token,
-      client: Authable.Model.Client,
-      app: Authable.Model.App,
-      expires_in: %{
-        access_token: 3600,
-        refresh_token: 24 * 3600,
-        authorization_code: 300,
-        session_token: 30 * 24 * 3600
-      },
-      grant_types: %{
-        authorization_code: Authable.GrantType.AuthorizationCode,
-        client_credentials: Authable.GrantType.ClientCredentials,
-        password: Authable.GrantType.Password,
-        refresh_token: Authable.GrantType.RefreshToken
-      },
-      auth_strategies: %{
-        headers: %{
-          "authorization" => [
-            {~r/Basic ([a-zA-Z\-_\+=]+)/, Authable.Authentication.Basic},
-            {~r/Bearer ([a-zA-Z\-_\+=]+)/, Authable.Authentication.Bearer},
-          ],
-          "x-api-token" => [
-            {~r/([a-zA-Z\-_\+=]+)/, Authable.Authentication.Bearer}
-          ]
-        },
-        query_params: %{
-          "access_token" => Authable.Authentication.Bearer
-        },
-        sessions: %{
-          "session_token" => Authable.Authentication.Session
-        }
-      },
-      scopes: ~w(read write session),
-      renderer: Authable.Renderer.RestApi
-    ```
+```elixir
+config :authable,
+  ecto_repos: [Authable.Repo],
+  repo: Authable.Repo,
+  resource_owner: Authable.Model.User,
+  token_store: Authable.Model.Token,
+  client: Authable.Model.Client,
+  app: Authable.Model.App,
+  expires_in: %{
+    access_token: 3600,
+    refresh_token: 24 * 3600,
+    authorization_code: 300,
+    session_token: 30 * 24 * 3600
+  },
+  grant_types: %{
+    authorization_code: Authable.GrantType.AuthorizationCode,
+    client_credentials: Authable.GrantType.ClientCredentials,
+    password: Authable.GrantType.Password,
+    refresh_token: Authable.GrantType.RefreshToken
+  },
+  auth_strategies: %{
+    headers: %{
+      "authorization" => [
+        {~r/Basic ([a-zA-Z\-_\+=]+)/, Authable.Authentication.Basic},
+        {~r/Bearer ([a-zA-Z\-_\+=]+)/, Authable.Authentication.Bearer},
+      ],
+      "x-api-token" => [
+        {~r/([a-zA-Z\-_\+=]+)/, Authable.Authentication.Bearer}
+      ]
+    },
+    query_params: %{
+      "access_token" => Authable.Authentication.Bearer
+    },
+    sessions: %{
+      "session_token" => Authable.Authentication.Session
+    }
+  },
+  scopes: ~w(read write session),
+  renderer: Authable.Renderer.RestApi
+```
 
   If you want to disable a grant type then delete from grant types config.
 
@@ -73,21 +76,21 @@ The package can be installed as:
 
   4. Add database configurations for the `Authable.Repo` on env config files:
 
-    ```elixir
-    config :authable, Authable.Repo,
-      adapter: Ecto.Adapters.Postgres,
-      username: "",
-      password: "",
-      database: "",
-      hostname: "",
-      pool_size: 10
-    ```
+```elixir
+config :authable, Authable.Repo,
+  adapter: Ecto.Adapters.Postgres,
+  username: "",
+  password: "",
+  database: "",
+  hostname: "",
+  pool_size: 10
+```
 
   5. Run migrations for Authable.Repo (Note: all id fields are UUID type):
 
-    ```elixir
-    mix ecto.migrate -r Authable.Repo
-    ```
+```elixir
+mix ecto.migrate -r Authable.Repo
+```
 
   6. You are ready to go!
 
@@ -262,8 +265,3 @@ MIT
 https://tools.ietf.org/html/rfc6749
 
 https://tools.ietf.org/html/rfc6750
-
-## Badges
-
-[![Build Status](https://travis-ci.org/mustafaturan/authable.svg?branch=master)](https://travis-ci.org/mustafaturan/authable)
-[![Deps Status](https://beta.hexfaktor.org/badge/all/github/mustafaturan/authable.svg)](https://beta.hexfaktor.org/github/mustafaturan/authable)
