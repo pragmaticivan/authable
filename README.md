@@ -228,7 +228,7 @@ To change models, you have two options:
 
 1) You may change the module name from configuration
 
-2) You may copy Authabe.Model.XXX and update it on your app.
+2) You may copy Authable.Model.XXX and update it on your app.
 
 ## Test
 
