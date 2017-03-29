@@ -10,87 +10,87 @@ OAuth2 Provider implementation modules and helpers using `plug`, `ecto` and `pos
 The package can be installed as:
 
   1. Add authable to your list of dependencies in `mix.exs`:
-
-  Only for ecto versions > 2.0
-
-```elixir
-def deps do
-  [{:authable, "~> 0.8.0"}]
-end
-```
+    
+      Only for ecto versions > 2.0
+    
+      ```elixir
+      def deps do
+        [{:authable, "~> 0.8.0"}]
+      end
+      ```
 
   2. Ensure authable is started before your application:
-
-```elixir
-def application do
-  [applications: [:authable]]
-end
-```
+    
+      ```elixir
+      def application do
+        [applications: [:authable]]
+      end
+      ```
 
   3. Add authable configurations to your `config/config.exs` file:
 
-```elixir
-config :authable,
-  ecto_repos: [Authable.Repo],
-  repo: Authable.Repo,
-  resource_owner: Authable.Model.User,
-  token_store: Authable.Model.Token,
-  client: Authable.Model.Client,
-  app: Authable.Model.App,
-  expires_in: %{
-    access_token: 3600,
-    refresh_token: 24 * 3600,
-    authorization_code: 300,
-    session_token: 30 * 24 * 3600
-  },
-  grant_types: %{
-    authorization_code: Authable.GrantType.AuthorizationCode,
-    client_credentials: Authable.GrantType.ClientCredentials,
-    password: Authable.GrantType.Password,
-    refresh_token: Authable.GrantType.RefreshToken
-  },
-  auth_strategies: %{
-    headers: %{
-      "authorization" => [
-        {~r/Basic ([a-zA-Z\-_\+=]+)/, Authable.Authentication.Basic},
-        {~r/Bearer ([a-zA-Z\-_\+=]+)/, Authable.Authentication.Bearer},
-      ],
-      "x-api-token" => [
-        {~r/([a-zA-Z\-_\+=]+)/, Authable.Authentication.Bearer}
-      ]
-    },
-    query_params: %{
-      "access_token" => Authable.Authentication.Bearer
-    },
-    sessions: %{
-      "session_token" => Authable.Authentication.Session
-    }
-  },
-  scopes: ~w(read write session),
-  renderer: Authable.Renderer.RestApi
-```
+      ```elixir
+      config :authable,
+        ecto_repos: [Authable.Repo],
+        repo: Authable.Repo,
+        resource_owner: Authable.Model.User,
+        token_store: Authable.Model.Token,
+        client: Authable.Model.Client,
+        app: Authable.Model.App,
+        expires_in: %{
+          access_token: 3600,
+          refresh_token: 24 * 3600,
+          authorization_code: 300,
+            session_token: 30 * 24 * 3600
+          },
+          grant_types: %{
+            authorization_code: Authable.GrantType.AuthorizationCode,
+            client_credentials: Authable.GrantType.ClientCredentials,
+            password: Authable.GrantType.Password,
+            refresh_token: Authable.GrantType.RefreshToken
+          },
+          auth_strategies: %{
+            headers: %{
+              "authorization" => [
+                {~r/Basic ([a-zA-Z\-_\+=]+)/, Authable.Authentication.Basic},
+                {~r/Bearer ([a-zA-Z\-_\+=]+)/, Authable.Authentication.Bearer},
+              ],
+              "x-api-token" => [
+                {~r/([a-zA-Z\-_\+=]+)/, Authable.Authentication.Bearer}
+              ]
+            },
+            query_params: %{
+              "access_token" => Authable.Authentication.Bearer
+            },
+            sessions: %{
+              "session_token" => Authable.Authentication.Session
+            }
+          },
+          scopes: ~w(read write session),
+          renderer: Authable.Renderer.RestApi
+        ```
 
-  If you want to disable a grant type then delete from grant types config.
+        If you want to disable a grant type then delete from grant types config.
 
-  If you want to add a new grant type then add your own module with `authorize(params)` function and return a `Authable.Model.Token` struct.
+        If you want to add a new grant type then add your own module with `authorize(params)` function and return a `Authable.Model.Token` struct.
 
   4. Add database configurations for the `Authable.Repo` on env config files:
 
-```elixir
-config :authable, Authable.Repo,
-  adapter: Ecto.Adapters.Postgres,
-  username: "",
-  password: "",
-  database: "",
-  hostname: "",
-  pool_size: 10
-```
+        ```elixir
+        config :authable, Authable.Repo,
+          adapter: Ecto.Adapters.Postgres,
+          username: "",
+          password: "",
+          database: "",
+          hostname: "",
+          pool_size: 10
+        ```
 
   5. Run migrations for Authable.Repo (Note: all id fields are UUID type):
 
-```elixir
-mix ecto.migrate -r Authable.Repo
-```
+        ```elixir
+        mix ecto.migrate -r Authable.Repo
+        ```
 
   6. You are ready to go!
 
@@ -100,19 +100,13 @@ Please refer to hex docs for each module, function details and samples https://h
 
 ### Authentication
 
-Authable supports 3 main authentication types by default using Plug.Conn. You can add or remove authentication types using configuration. On successful authentication, resource owner automatically set on `conn.assigns[:current_user]` immutable.
+Authable supports 3 main authentication types by default using `Plug.Conn`. You can add or remove authentication types using configuration. On successful authentication, resource owner automatically set on `conn.assigns[:current_user]` immutable.
 
-1) Sessions
+1. **Sessions**. Reads session for configured `sessions` keys and passes to the matched authenticator to authenticate.
 
-Reads session for configured `sessions` keys and passes to the matched authenticator to authenticate.
+2. **Query Params**. Reads query params for configured `query_params` keys and passes to the matched authenticator to authenticate.
 
-2) Query Params
-
-Reads query params for configured `query_params` keys and passes to the matched authenticator to authenticate.
-
-3) Headers
-
-Reads headers for configured `headers` keys and passes to the matched authenticator to authenticate.
+3. **Headers**. Reads headers for configured `headers` keys and passes to the matched authenticator to authenticate.
 
 #### Examples
 
@@ -137,13 +131,13 @@ defmodule SomeModule.AppController do
 
   def index(conn, _params) do
     # anybody can call this action
-    ...
+    # ...
   end
 
   def create(conn, _params) do
-    # only logged in users can access this action
     current_user = conn.assigns[:current_user]
-    ...
+    # only logged in users can access this action
+    # ...
   end
 end
 
@@ -154,6 +148,7 @@ defmodule SomeModule.AppController do
 
   def register(conn, _params) do
     # only not logged in user can access this action
+    # ...
   end
 end
 ```
@@ -226,9 +221,8 @@ Authable.OAuth2.authorize_app(user, %{
 
 To change models, you have two options:
 
-1) You may change the module name from configuration
-
-2) You may copy Authable.Model.XXX and update it on your app.
+1. You may change the module name from configuration,
+2. You may copy Authable.Model.XXX and update it on your app.
 
 ## Test
 
@@ -242,11 +236,11 @@ mix test
 
 ### Issues, Bugs, Documentation, Enhancements
 
-1) Fork the project
+1. Fork the project
 
-2) Make your improvements and write your tests.
+2. Make your improvements and write your tests.
 
-3) Make a pull request.
+3. Make a pull request.
 
 ### To add new strategy:
 
@@ -256,12 +250,12 @@ Authable is an extensible module, you can create your strategy and share as hex 
 
 - HMAC Auth will be added as a new external strategy
 
+## References
+
+* https://tools.ietf.org/html/rfc6749
+
+* https://tools.ietf.org/html/rfc6750
+
 ## License
 
 MIT
-
-## References
-
-https://tools.ietf.org/html/rfc6749
-
-https://tools.ietf.org/html/rfc6750
