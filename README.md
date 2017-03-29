@@ -119,8 +119,8 @@ defmodule SomeModule.AppController do
 
   def index(conn, _params) do
     # access to current user on successful authentication
-    current_user = conn.assigns[:current_user]
-    ...
+    # ...
+    # current_user = conn.assigns[:current_user]
   end
 end
 
@@ -135,9 +135,9 @@ defmodule SomeModule.AppController do
   end
 
   def create(conn, _params) do
-    current_user = conn.assigns[:current_user]
     # only logged in users can access this action
     # ...
+    # current_user = conn.assigns[:current_user]
   end
 end
 
