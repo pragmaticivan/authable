@@ -30,7 +30,7 @@ defmodule Authable.GrantType.AuthorizationCode do
         "redirect_uri" => "http://localhost:4000/oauth2/callbacks",
         "code" => "W_hb8JEDmeYChsNfOGCmbQ",
         "scope" => "read"
-      %})
+      })
 
       # Without OAuth2 optional scope
       Authable.GrantType.AuthorizationCode.authorize(%{
@@ -38,7 +38,7 @@ defmodule Authable.GrantType.AuthorizationCode do
         "client_secret" => "Wi7Y_Q5LU4iIwJArgqXq2Q",
         "redirect_uri" => "http://localhost:4000/oauth2/callbacks",
         "code" => "W_hb8JEDmeYChsNfOGCmbQ"
-      %})
+      })
   """
   def authorize(%{"client_id" => client_id, "client_secret" => client_secret, "code" => code, "redirect_uri" => redirect_uri, "scope" => scopes}) do
     client = @repo.get_by(@client, id: client_id, secret: client_secret)
