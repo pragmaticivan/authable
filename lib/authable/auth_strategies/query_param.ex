@@ -14,16 +14,10 @@ defmodule Authable.AuthStrategy.QueryParam do
   And, it returns `Authable.Model.User` on sucess,
   `{:error, Map, :http_status_code}` on fails.
   """
-  def authenticate(conn, required_scopes) do
+  def authenticate(conn, required_scopes \\ []) do
     unless is_nil(@query_params_auth) do
       authenticate_via_query_params(@query_params_auth, conn.query_params,
         required_scopes)
-    end
-  end
-
-  def authenticate(conn) do
-    unless is_nil(@query_params_auth) do
-      authenticate_via_query_params(@query_params_auth, conn.query_params, [])
     end
   end
 

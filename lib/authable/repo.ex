@@ -4,4 +4,6 @@ defmodule Authable.Repo do
   """
 
   use Ecto.Repo, otp_app: :authable
+
+  @dialyzer {:nowarn_function, rollback: 1}
 end
