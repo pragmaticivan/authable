@@ -1,7 +1,7 @@
 defmodule Authable.Authentication.BearerTest do
   use ExUnit.Case
   use Authable.Rollbackable
-  use Authable.RepoCase
+  use Authable.RepoBase
   import Authable.Factory
   alias Authable.Authentication.Bearer, as: BearerAuthentication
 

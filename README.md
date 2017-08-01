@@ -10,33 +10,23 @@ OAuth2 Provider implementation modules and helpers using `plug`, `ecto` and `pos
 The package can be installed as:
 
   1. Add authable to your list of dependencies in `mix.exs`:
-    
+
       Only for ecto versions > 2.0
-    
+
       ```elixir
       def deps do
         [{:authable, "~> 0.8.0"}]
       end
       ```
 
-  2. Ensure authable is started before your application:
-    
-      ```elixir
-      def application do
-        [applications: [:authable]]
-      end
-      ```
+  2. Add authable configurations to your `config/config.exs` file:
 
-  3. Add authable configurations to your `config/config.exs` file:
+  *Important:* You should update `Authable.Repo` with your own repo!
 
       ```elixir
       config :authable,
         ecto_repos: [Authable.Repo],
         repo: Authable.Repo,
-        resource_owner: Authable.Model.User,
-        token_store: Authable.Model.Token,
-        client: Authable.Model.Client,
-        app: Authable.Model.App,
         expires_in: %{
           access_token: 3600,
           refresh_token: 24 * 3600,
@@ -74,7 +64,9 @@ The package can be installed as:
 
         If you want to add a new grant type then add your own module with `authorize(params)` function and return a `Authable.Model.Token` struct.
 
-  4. Add database configurations for the `Authable.Repo` on env config files:
+  3. Add database configurations for the `Authable.Repo` on env config files:
+
+  *Important:* You should update `Authable.Repo` with your own repo!
 
         ```elixir
         config :authable, Authable.Repo,
@@ -86,13 +78,15 @@ The package can be installed as:
           pool_size: 10
         ```
 
-  5. Run migrations for Authable.Repo (Note: all id fields are UUID type):
+  4. Run migrations for Authable.Repo (Note: all id fields are UUID type):
+
+  *Important:* You should update `Authable.Repo` with your own repo!
 
         ```elixir
         mix ecto.migrate -r Authable.Repo
         ```
 
-  6. You are ready to go!
+  5. You are ready to go!
 
 ## Usage
 

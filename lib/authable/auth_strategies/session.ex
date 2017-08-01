@@ -7,8 +7,6 @@ defmodule Authable.AuthStrategy.Session do
   import Plug.Conn, only: [fetch_session: 1, get_session: 2]
 
   @behaviour Authable.AuthStrategy
-  @auth_strategies Application.get_env(:authable, :auth_strategies)
-  @session_auth Map.get(@auth_strategies, :sessions)
 
   @doc """
   Finds resource owner using configured 'session' keys. Returns nil if
@@ -17,8 +15,9 @@ defmodule Authable.AuthStrategy.Session do
   `{:error, Map, :http_status_code}` on fails.
   """
   def authenticate(conn, required_scopes) do
-    unless is_nil(@session_auth) do
-      authenticate_via_session(conn, @session_auth, required_scopes)
+    session_auth = session_auth()
+    unless is_nil(session_auth) do
+      authenticate_via_session(conn, session_auth, required_scopes)
     end
   end
 
@@ -30,4 +29,10 @@ defmodule Authable.AuthStrategy.Session do
       end
     end)
   end
+
+  defp auth_strategies,
+    do: Application.get_env(:authable, :auth_strategies)
+
+  defp session_auth,
+    do: Map.get(auth_strategies(), :sessions)
 end

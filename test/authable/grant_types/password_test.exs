@@ -1,7 +1,7 @@
 defmodule Authable.GrantType.PasswordTest do
   use ExUnit.Case
   use Authable.Rollbackable
-  use Authable.RepoCase
+  use Authable.RepoBase
   import Authable.Factory
   alias Authable.GrantType.Password, as: PasswordGrantType
 

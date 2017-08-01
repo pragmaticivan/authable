@@ -5,8 +5,6 @@ defmodule Authable.AuthStrategy.QueryParam do
   """
 
   @behaviour Authable.AuthStrategy
-  @auth_strategies Application.get_env(:authable, :auth_strategies)
-  @query_params_auth Map.get(@auth_strategies, :query_params)
 
   @doc """
   Finds resource owner using configured 'query params' keys. Returns nil if
@@ -15,8 +13,9 @@ defmodule Authable.AuthStrategy.QueryParam do
   `{:error, Map, :http_status_code}` on fails.
   """
   def authenticate(conn, required_scopes \\ []) do
-    unless is_nil(@query_params_auth) do
-      authenticate_via_query_params(@query_params_auth, conn.query_params,
+    query_params_auth = query_params_auth()
+    unless is_nil(query_params_auth) do
+      authenticate_via_query_params(query_params_auth, conn.query_params,
         required_scopes)
     end
   end
@@ -28,4 +27,10 @@ defmodule Authable.AuthStrategy.QueryParam do
       end
     end)
   end
+
+  defp auth_strategies,
+    do: Application.get_env(:authable, :auth_strategies)
+
+  defp query_params_auth,
+    do: Map.get(auth_strategies(), :query_params)
 end

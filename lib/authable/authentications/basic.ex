@@ -4,11 +4,10 @@ defmodule Authable.Authentication.Basic do
   behaviour.
   """
 
+  use Authable.RepoBase
   alias Authable.Utils.Crypt, as: CryptUtil
 
   @behaviour Authable.Authentication
-  @repo Application.get_env(:authable, :repo)
-  @resource_owner Application.get_env(:authable, :resource_owner)
 
   @doc """
   Authenticates resource-owner using Basic Authentication header value.
@@ -50,7 +49,7 @@ defmodule Authable.Authentication.Basic do
     end
   end
   defp authenticate_with_credentials(email, password) do
-    case @repo.get_by(@resource_owner, email: email) do
+    case repo().get_by(@resource_owner, email: email) do
       nil ->
         {:error, %{invalid_credentials: "Identity not found.", headers:
           error_headers()}, :unauthorized}
@@ -69,4 +68,7 @@ defmodule Authable.Authentication.Basic do
 
   defp error_headers,
     do: [%{"www-authenticate" => "Basic realm=\"authable\""}]
+
+  defp repo,
+    do: Application.get_env(:authable, :repo)
 end

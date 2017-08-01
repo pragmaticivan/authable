@@ -3,13 +3,11 @@ defmodule Authable.GrantType.AuthorizationCode do
   AuthorizationCode grant type for OAuth2 Authorization Server
   """
 
+  use Authable.RepoBase
   import Authable.GrantType.Base
   alias Authable.GrantType.Error, as: GrantTypeError
 
   @behaviour Authable.GrantType
-  @repo Application.get_env(:authable, :repo)
-  @token_store Application.get_env(:authable, :token_store)
-  @client Application.get_env(:authable, :client)
 
   @doc """
   Authorize client for 'resource owner' using client credentials and
@@ -41,11 +39,11 @@ defmodule Authable.GrantType.AuthorizationCode do
       })
   """
   def authorize(%{"client_id" => client_id, "client_secret" => client_secret, "code" => code, "redirect_uri" => redirect_uri, "scope" => scopes}) do
-    client = @repo.get_by(@client, id: client_id, secret: client_secret)
+    client = repo().get_by(@client, id: client_id, secret: client_secret)
     do_authorize(client, code, redirect_uri, scopes)
   end
   def authorize(%{"client_id" => client_id, "client_secret" => client_secret, "code" => code, "redirect_uri" => redirect_uri}) do
-    client = @repo.get_by(@client, id: client_id, secret: client_secret)
+    client = repo().get_by(@client, id: client_id, secret: client_secret)
     do_authorize(client, code, redirect_uri, "")
   end
   def authorize(_) do
@@ -56,7 +54,7 @@ defmodule Authable.GrantType.AuthorizationCode do
   defp do_authorize(nil, _, _, _),
     do: GrantTypeError.invalid_client("Invalid client id or secret.")
   defp do_authorize(client, code, redirect_uri, scopes) do
-    token = @repo.get_by(@token_store, value: code, name: grant_type())
+    token = repo().get_by(@token_store, value: code, name: grant_type())
     create_tokens(token, client, redirect_uri, scopes)
   end
 
@@ -81,7 +79,7 @@ defmodule Authable.GrantType.AuthorizationCode do
 
   defp delete_token({:error, err, code}), do: {:error, err, code}
   defp delete_token({:ok, token}) do
-    @repo.delete!(token)
+    repo().delete!(token)
     {:ok, token}
   end
 
@@ -138,4 +136,7 @@ defmodule Authable.GrantType.AuthorizationCode do
   end
 
   defp grant_type, do: "authorization_code"
+
+  defp repo,
+    do: Application.get_env(:authable, :repo)
 end

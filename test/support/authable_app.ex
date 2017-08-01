@@ -1,4 +1,4 @@
-defmodule Authable do
+defmodule AuthableApp do
   @moduledoc """
   Authable worker for OAuth2 provider implementation.
 
@@ -122,4 +122,21 @@ defmodule Authable do
         %})
 
   """
+
+  use Application
+  use Authable.RepoBase
+
+  def start(_type, _args) do
+    import Supervisor.Spec
+
+    children = [
+      supervisor(repo(), [])
+    ]
+
+    opts = [strategy: :one_for_one, name: Authable.Supervisor]
+    Supervisor.start_link(children, opts)
+  end
+
+  defp repo,
+    do: Application.get_env(:authable, :repo)
 end

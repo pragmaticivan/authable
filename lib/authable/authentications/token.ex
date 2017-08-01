@@ -6,12 +6,10 @@ defmodule Authable.Authentication.Token do
   'token store(Authable.Token)'.
   """
 
+  use Authable.RepoBase
   alias Authable.Authentication.Error, as: AuthenticationError
 
   @behaviour Authable.Authentication
-  @repo Application.get_env(:authable, :repo)
-  @resource_owner Application.get_env(:authable, :resource_owner)
-  @token_store Application.get_env(:authable, :token_store)
 
   @doc """
   Authenticates resource-owner using given token name and value pairs.
@@ -32,7 +30,7 @@ defmodule Authable.Authentication.Token do
   """
   def authenticate({token_name, token_value}, required_scopes) do
     token_check(
-      @repo.get_by(@token_store, value: token_value, name: token_name),
+      repo().get_by(@token_store, value: token_value, name: token_name),
       required_scopes
     )
   end
@@ -46,7 +44,7 @@ defmodule Authable.Authentication.Token do
       scopes = Authable.Utils.String.comma_split(token.details["scope"])
       if Authable.Utils.List.subset?(scopes, required_scopes) do
         resource_owner_check(
-          @repo.get(@resource_owner, token.user_id)
+          repo().get(@resource_owner, token.user_id)
         )
       else
         AuthenticationError.insufficient_scope(required_scopes)
@@ -58,4 +56,7 @@ defmodule Authable.Authentication.Token do
     do: AuthenticationError.invalid_token("User not found.")
   defp resource_owner_check(resource_owner),
     do: {:ok, resource_owner}
+
+  defp repo,
+    do: Application.get_env(:authable, :repo)
 end

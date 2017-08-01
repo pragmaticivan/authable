@@ -7,8 +7,6 @@ defmodule Authable.AuthStrategy.Header do
   import Plug.Conn, only: [get_req_header: 2]
 
   @behaviour Authable.AuthStrategy
-  @auth_strategies Application.get_env(:authable, :auth_strategies)
-  @header_auth Map.get(@auth_strategies, :headers)
 
   @doc """
   Finds resource owner using configured 'headers' keys. Returns nil if
@@ -17,8 +15,9 @@ defmodule Authable.AuthStrategy.Header do
   `{:error, Map, :http_status_code}` on fails.
   """
   def authenticate(conn, required_scopes) do
-    unless is_nil(@header_auth) do
-      authenticate(conn, @header_auth, required_scopes)
+    header_auth = header_auth()
+    unless is_nil(header_auth) do
+      authenticate(conn, header_auth, required_scopes)
     end
   end
 
@@ -43,4 +42,10 @@ defmodule Authable.AuthStrategy.Header do
       module.authenticate(header_val, required_scopes)
     end
   end
+
+  defp auth_strategies,
+    do: Application.get_env(:authable, :auth_strategies)
+
+  defp header_auth,
+    do: Map.get(auth_strategies(), :headers)
 end

@@ -3,10 +3,7 @@ defmodule Authable.GrantType.Base do
   Base module for OAuth2 grant types
   """
 
-  @repo Application.get_env(:authable, :repo)
-  @token_store Application.get_env(:authable, :token_store)
-  @app Application.get_env(:authable, :app)
-  @grant_types Application.get_env(:authable, :grant_types)
+  use Authable.RepoBase
 
   @doc """
   A common function to generate oauth2 tokens (access_token and refresh_token)
@@ -31,7 +28,7 @@ defmodule Authable.GrantType.Base do
 
     user_id
     |> build_token_params(grant_type, client_id, scope, redirect_uri)
-    |> put_refresh_token?(@grant_types[:refresh_token])
+    |> put_refresh_token?(grant_types()[:refresh_token])
     |> create_access_token
   end
 
@@ -48,7 +45,7 @@ defmodule Authable.GrantType.Base do
       )
   """
   def app_authorized?(user_id, client_id),
-    do: !is_nil(@repo.get_by(@app, user_id: user_id, client_id: client_id))
+    do: !is_nil(repo().get_by(@app, user_id: user_id, client_id: client_id))
 
   defp scopes_check(scopes) do
     valid_scopes = Application.get_env(:authable, :scopes)
@@ -82,7 +79,7 @@ defmodule Authable.GrantType.Base do
     refresh_token_changeset = @token_store.refresh_token_changeset(
       %@token_store{}, token_params
     )
-    case @repo.insert(refresh_token_changeset) do
+    case repo().insert(refresh_token_changeset) do
       {:ok, refresh_token} ->
         token_params |> Map.merge(%{details: Map.put(token_params[:details],
           :refresh_token, refresh_token.value)}
@@ -96,8 +93,14 @@ defmodule Authable.GrantType.Base do
     access_token_changeset = @token_store.access_token_changeset(
       %@token_store{}, token_params
     )
-    case @repo.insert(access_token_changeset) do
+    case repo().insert(access_token_changeset) do
       {:ok, access_token} -> access_token
     end
   end
+
+  defp grant_types,
+    do: Application.get_env(:authable, :grant_types)
+
+  defp repo,
+    do: Application.get_env(:authable, :repo)
 end

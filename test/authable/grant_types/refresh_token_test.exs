@@ -1,7 +1,7 @@
 defmodule Authable.GrantType.RefreshTokenTest do
   use ExUnit.Case
   use Authable.Rollbackable
-  use Authable.RepoCase
+  use Authable.RepoBase
   import Authable.Factory
   alias Authable.GrantType.RefreshToken, as: RefreshTokenGrantType
 
@@ -28,8 +28,11 @@ defmodule Authable.GrantType.RefreshTokenTest do
   end
 
   test "fails if app is deleted by resource_owner", %{params: params, app: app} do
-    @repo.delete!(app)
+    repo().delete!(app)
     {:error, _, http_status} = RefreshTokenGrantType.authorize(params)
     assert http_status == :unauthorized
   end
+
+  defp repo,
+    do: Application.get_env(:authable, :repo)
 end

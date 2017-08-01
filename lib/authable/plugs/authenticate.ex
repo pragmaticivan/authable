@@ -7,8 +7,6 @@ defmodule Authable.Plug.Authenticate do
   import Plug.Conn
   alias Authable.Helper
 
-  @renderer Application.get_env(:authable, :renderer)
-
   def init(opts) do
     Keyword.get opts, :scopes, ""
   end
@@ -59,19 +57,24 @@ defmodule Authable.Plug.Authenticate do
   end
 
   defp response_conn_with(conn, nil) do
+    renderer = renderer()
     conn
     |> put_resp_header("www-authenticate", "Bearer realm=\"authable\"")
-    |> @renderer.render(:forbidden, %{errors: %{details: "Resource access requires authentication!"}})
-    |> halt
+    |> renderer.render(:forbidden, %{errors: %{details: "Resource access requires authentication!"}})
+    |> halt()
   end
   defp response_conn_with(conn, {:error, errors, http_status_code}) do
     [%{"www-authenticate" => header_val}] = errors[:headers]
     errors = %{errors: Map.delete(errors, :headers)}
+    renderer = renderer()
     conn
     |> put_resp_header("www-authenticate", header_val)
-    |> @renderer.render(http_status_code, %{errors: errors})
-    |> halt
+    |> renderer.render(http_status_code, %{errors: errors})
+    |> halt()
   end
   defp response_conn_with(conn, {:ok, current_user}), do: assign(conn,
     :current_user, current_user)
+
+  defp renderer,
+    do: Application.get_env(:authable, :renderer)
 end

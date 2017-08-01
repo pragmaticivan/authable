@@ -3,13 +3,8 @@ defmodule Authable.Factory do
   Generates factories
   """
 
-  @repo Application.get_env(:authable, :repo)
-  @resource_owner Application.get_env(:authable, :resource_owner)
-  @token_store Application.get_env(:authable, :token_store)
-  @client Application.get_env(:authable, :client)
-  @app Application.get_env(:authable, :app)
-
-  use ExMachina.Ecto, repo: @repo
+  use Authable.RepoBase
+  use ExMachina.Ecto, repo: repo()
 
   def user_factory do
     %@resource_owner{
@@ -80,4 +75,7 @@ defmodule Authable.Factory do
       scope: "read,write"
     }
   end
+
+  defp repo,
+    do: Application.get_env(:authable, :repo)
 end

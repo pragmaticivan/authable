@@ -1,7 +1,7 @@
 defmodule Authable.GrantType.AuthorizationCodeTest do
   use ExUnit.Case
   use Authable.Rollbackable
-  use Authable.RepoCase
+  use Authable.RepoBase
   import Authable.Factory
   alias Authable.GrantType.AuthorizationCode, as: AuthorizationCodeGrantType
 
@@ -25,7 +25,7 @@ defmodule Authable.GrantType.AuthorizationCodeTest do
 
   test "oauth2 authorization with authorization_code auto inserts app", %{params: params} do
     AuthorizationCodeGrantType.authorize(params)
-    assert Enum.count(@repo.all(@app)) > 0
+    assert Enum.count(repo().all(@app)) > 0
   end
 
   test "can not insert access_token more than one with a token with same authorization_code params", %{params: params} do
@@ -33,4 +33,7 @@ defmodule Authable.GrantType.AuthorizationCodeTest do
     {:error, _, http_status} = AuthorizationCodeGrantType.authorize(params)
     assert http_status == :unauthorized
   end
+
+  defp repo,
+    do: Application.get_env(:authable, :repo)
 end
