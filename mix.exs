@@ -3,7 +3,7 @@ defmodule Authable.Mixfile do
 
   def project do
     [app: :authable,
-     version: "0.8.0",
+     version: "0.9.0",
      elixir: "~> 1.3",
      elixirc_paths: elixirc_paths(Mix.env),
      build_embedded: Mix.env == :prod,
@@ -70,7 +70,7 @@ defmodule Authable.Mixfile do
 
   defp package do
     [name: :authable,
-     files: ["lib", "web", "priv", "mix.exs", "README.md"],
+     files: ["lib", "priv", "mix.exs", "README.md"],
      maintainers: ["Mustafa Turan"],
      licenses: ["MIT"],
      links: %{"GitHub" => "https://github.com/mustafaturan/authable"}]

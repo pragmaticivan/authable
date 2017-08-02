@@ -13,52 +13,52 @@ The package can be installed as:
 
       Only for ecto versions > 2.0
 
-      ```elixir
-      def deps do
-        [{:authable, "~> 0.8.0"}]
-      end
-      ```
+```elixir
+    def deps do
+      [{:authable, "~> 0.9.0"}]
+    end
+```
 
   2. Add authable configurations to your `config/config.exs` file:
 
   *Important:* You should update `Authable.Repo` with your own repo!
 
-      ```elixir
-      config :authable,
-        ecto_repos: [Authable.Repo],
-        repo: Authable.Repo,
-        expires_in: %{
-          access_token: 3600,
-          refresh_token: 24 * 3600,
-          authorization_code: 300,
-            session_token: 30 * 24 * 3600
+```elixir
+    config :authable,
+      ecto_repos: [Authable.Repo],
+      repo: Authable.Repo,
+      expires_in: %{
+        access_token: 3600,
+        refresh_token: 24 * 3600,
+        authorization_code: 300,
+          session_token: 30 * 24 * 3600
+        },
+        grant_types: %{
+          authorization_code: Authable.GrantType.AuthorizationCode,
+          client_credentials: Authable.GrantType.ClientCredentials,
+          password: Authable.GrantType.Password,
+          refresh_token: Authable.GrantType.RefreshToken
+        },
+        auth_strategies: %{
+          headers: %{
+            "authorization" => [
+              {~r/Basic ([a-zA-Z\-_\+=]+)/, Authable.Authentication.Basic},
+              {~r/Bearer ([a-zA-Z\-_\+=]+)/, Authable.Authentication.Bearer},
+            ],
+            "x-api-token" => [
+              {~r/([a-zA-Z\-_\+=]+)/, Authable.Authentication.Bearer}
+            ]
           },
-          grant_types: %{
-            authorization_code: Authable.GrantType.AuthorizationCode,
-            client_credentials: Authable.GrantType.ClientCredentials,
-            password: Authable.GrantType.Password,
-            refresh_token: Authable.GrantType.RefreshToken
+          query_params: %{
+            "access_token" => Authable.Authentication.Bearer
           },
-          auth_strategies: %{
-            headers: %{
-              "authorization" => [
-                {~r/Basic ([a-zA-Z\-_\+=]+)/, Authable.Authentication.Basic},
-                {~r/Bearer ([a-zA-Z\-_\+=]+)/, Authable.Authentication.Bearer},
-              ],
-              "x-api-token" => [
-                {~r/([a-zA-Z\-_\+=]+)/, Authable.Authentication.Bearer}
-              ]
-            },
-            query_params: %{
-              "access_token" => Authable.Authentication.Bearer
-            },
-            sessions: %{
-              "session_token" => Authable.Authentication.Session
-            }
-          },
-          scopes: ~w(read write session),
-          renderer: Authable.Renderer.RestApi
-        ```
+          sessions: %{
+            "session_token" => Authable.Authentication.Session
+          }
+        },
+        scopes: ~w(read write session),
+        renderer: Authable.Renderer.RestApi
+```
 
         If you want to disable a grant type then delete from grant types config.
 
@@ -68,23 +68,23 @@ The package can be installed as:
 
   *Important:* You should update `Authable.Repo` with your own repo!
 
-        ```elixir
-        config :authable, Authable.Repo,
-          adapter: Ecto.Adapters.Postgres,
-          username: "",
-          password: "",
-          database: "",
-          hostname: "",
-          pool_size: 10
-        ```
+```elixir
+    config :authable, Authable.Repo,
+      adapter: Ecto.Adapters.Postgres,
+      username: "",
+      password: "",
+      database: "",
+      hostname: "",
+      pool_size: 10
+```
 
   4. Run migrations for Authable.Repo (Note: all id fields are UUID type):
 
   *Important:* You should update `Authable.Repo` with your own repo!
 
-        ```elixir
-        mix ecto.migrate -r Authable.Repo
-        ```
+```elixir
+    mix ecto.migrate -r Authable.Repo
+```
 
   5. You are ready to go!
 
