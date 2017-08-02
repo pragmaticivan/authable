@@ -3,8 +3,7 @@ defmodule Authable.OAuth2 do
   OAuth2 authorization strategy router
   """
 
-  @grant_types Application.get_env(:authable, :grant_types)
-  @app_authorization Application.get_env(:authable, :app_authorization, Authable.Authorization.App)
+  use Authable.RepoBase
 
   @doc """
   Calls appropriate module authorize function for given grant type.
@@ -52,7 +51,7 @@ defmodule Authable.OAuth2 do
   """
   def authorize(params) do
     strategy_check(params["grant_type"])
-    @grant_types[String.to_atom(params["grant_type"])].authorize(params)
+    grant_types()[String.to_atom(params["grant_type"])].authorize(params)
   end
 
   @doc """
@@ -72,7 +71,7 @@ defmodule Authable.OAuth2 do
       %})
   """
   def grant_app_authorization(user, %{"client_id" => client_id, "redirect_uri" => redirect_uri, "scope" => scope}) do
-    @app_authorization.grant(%{"user" => user, "client_id" => client_id,
+    app_authorization().grant(%{"user" => user, "client_id" => client_id,
       "redirect_uri" => redirect_uri, "scope" => scope})
   end
 
@@ -82,7 +81,7 @@ defmodule Authable.OAuth2 do
   def authorize_app(user, %{"client_id" => client_id, "redirect_uri" => redirect_uri, "scope" => scope}) do
     require Logger
     Logger.warn("Warning: Deprecated use OAuth2.grant_app_authorization/2")
-    @app_authorization.grant(%{"user" => user, "client_id" => client_id,
+    app_authorization().grant(%{"user" => user, "client_id" => client_id,
       "redirect_uri" => redirect_uri, "scope" => scope})
   end
 
@@ -99,13 +98,21 @@ defmodule Authable.OAuth2 do
       %})
   """
   def revoke_app_authorization(user, %{"id" => id}) do
-    @app_authorization.revoke(%{"user" => user, "id" => id})
+    app_authorization().revoke(%{"user" => user, "id" => id})
   end
 
   defp strategy_check(grant_type) do
-    unless Map.has_key?(@grant_types, String.to_atom(grant_type)) do
+    unless Map.has_key?(grant_types(), String.to_atom(grant_type)) do
       raise Authable.Error.SuspiciousActivity,
         message: "Strategy for '#{grant_type}' is not enabled!"
     end
   end
+
+  defp app_authorization do
+    Application.get_env(:authable, :app_authorization,
+      Authable.Authorization.App)
+  end
+
+  defp grant_types,
+    do: Application.get_env(:authable, :grant_types)
 end

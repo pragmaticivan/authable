@@ -3,15 +3,12 @@ defmodule Authable.GrantType.Password do
   Password grant type for OAuth2 Authorization Server
   """
 
+  use Authable.RepoBase
   import Authable.GrantType.Base
   alias Authable.GrantType.Error, as: GrantTypeError
   alias Authable.Utils.Crypt, as: CryptUtil
 
   @behaviour Authable.GrantType
-  @repo Application.get_env(:authable, :repo)
-  @resource_owner Application.get_env(:authable, :resource_owner)
-  @client Application.get_env(:authable, :client)
-  @scopes Enum.join(Application.get_env(:authable, :scopes), ",")
 
   @doc """
   Authorize client for 'resouce owner' using resouce owner credentials and
@@ -39,14 +36,14 @@ defmodule Authable.GrantType.Password do
       %})
   """
   def authorize(%{"email" => email, "password" => password, "client_id" => client_id, "scope" => scopes}) do
-    client = @repo.get(@client, client_id)
-    user = @repo.get_by(@resource_owner, email: email)
+    client = repo().get(@client, client_id)
+    user = repo().get_by(@resource_owner, email: email)
     create_tokens(client, user, password, scopes)
   end
   def authorize(%{"email" => email, "password" => password, "client_id" => client_id}) do
-    client = @repo.get(@client, client_id)
-    user = @repo.get_by(@resource_owner, email: email)
-    create_tokens(client, user, password, @scopes)
+    client = repo().get(@client, client_id)
+    user = repo().get_by(@resource_owner, email: email)
+    create_tokens(client, user, password, scopes())
   end
   def authorize(_) do
     GrantTypeError.invalid_request(
@@ -73,7 +70,7 @@ defmodule Authable.GrantType.Password do
   defp validate_token_scope({:error, err, code}, _), do: {:error, err, code}
   defp validate_token_scope({:ok, user}, ""), do: {:ok, user}
   defp validate_token_scope({:ok, user}, required_scopes) do
-    scopes = Authable.Utils.String.comma_split(@scopes)
+    scopes = Authable.Utils.String.comma_split(scopes())
     required_scopes = Authable.Utils.String.comma_split(required_scopes)
     if Authable.Utils.List.subset?(scopes, required_scopes) do
       {:ok, user}
@@ -91,4 +88,10 @@ defmodule Authable.GrantType.Password do
   end
 
   defp grant_type, do: "password"
+
+  defp repo,
+    do: Application.get_env(:authable, :repo)
+
+  defp scopes,
+    do: Enum.join(Application.get_env(:authable, :scopes), ",")
 end

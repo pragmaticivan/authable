@@ -1,7 +1,7 @@
 defmodule Authable.Authentication.BasicTest do
   use ExUnit.Case
   use Authable.Rollbackable
-  use Authable.RepoCase
+  use Authable.RepoBase
   import Authable.Factory
   alias Authable.Authentication.Basic, as: BasicAuthentication
 

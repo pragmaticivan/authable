@@ -3,13 +3,11 @@ defmodule Authable.GrantType.RefreshToken do
   RefreshToken grant type for OAuth2 Authorization Server
   """
 
+  use Authable.RepoBase
   import Authable.GrantType.Base
   alias Authable.GrantType.Error, as: GrantTypeError
 
   @behaviour Authable.GrantType
-  @repo Application.get_env(:authable, :repo)
-  @token_store Application.get_env(:authable, :token_store)
-  @client Application.get_env(:authable, :client)
 
   @doc """
   Authorize client for 'resouce owner' using client credentials and
@@ -37,14 +35,14 @@ defmodule Authable.GrantType.RefreshToken do
       %})
   """
   def authorize(%{"client_id" => client_id, "client_secret" => client_secret, "refresh_token" => refresh_token, "scope" => scopes}) do
-    token = @repo.get_by(@token_store, value: refresh_token)
-    client = @repo.get_by(@client, id: client_id, secret: client_secret)
+    token = repo().get_by(@token_store, value: refresh_token)
+    client = repo().get_by(@client, id: client_id, secret: client_secret)
     create_tokens(token, client, scopes)
   end
 
   def authorize(%{"client_id" => client_id, "client_secret" => client_secret, "refresh_token" => refresh_token}) do
-    token = @repo.get_by(@token_store, value: refresh_token)
-    client = @repo.get_by(@client, id: client_id, secret: client_secret)
+    token = repo().get_by(@token_store, value: refresh_token)
+    client = repo().get_by(@client, id: client_id, secret: client_secret)
     create_tokens(token, client,
       (if token, do: token.details["scope"], else: ""))
   end
@@ -77,7 +75,7 @@ defmodule Authable.GrantType.RefreshToken do
   defp delete_token({:error, err, code}),
     do: {:error, err, code}
   defp delete_token({:ok, token}) do
-    @repo.delete!(token)
+    repo().delete!(token)
     {:ok, token}
   end
 
@@ -127,4 +125,7 @@ defmodule Authable.GrantType.RefreshToken do
   end
 
   defp grant_type, do: "refresh_token"
+
+  defp repo,
+    do: Application.get_env(:authable, :repo)
 end

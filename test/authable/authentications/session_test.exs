@@ -1,7 +1,7 @@
 defmodule Authable.Authentication.SessionTest do
   use ExUnit.Case
   use Authable.Rollbackable
-  use Authable.RepoCase
+  use Authable.RepoBase
   import Authable.Factory
   alias Authable.Authentication.Session, as: SessionAuthentication
 

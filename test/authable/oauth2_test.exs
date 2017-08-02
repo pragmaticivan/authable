@@ -1,7 +1,7 @@
 defmodule Authable.OAuth2Test do
   use ExUnit.Case
   use Authable.Rollbackable
-  use Authable.RepoCase
+  use Authable.RepoBase
   import Authable.Factory
   alias Authable.OAuth2
   alias Authable.Error.SuspiciousActivity, as: SuspiciousActivityError

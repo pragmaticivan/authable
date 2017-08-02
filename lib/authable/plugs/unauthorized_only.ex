@@ -6,8 +6,6 @@ defmodule Authable.Plug.UnauthorizedOnly do
   import Plug.Conn
   alias Authable.Helper
 
-  @renderer Application.get_env(:authable, :renderer)
-
   def init([]), do: false
 
   @doc """
@@ -31,8 +29,12 @@ defmodule Authable.Plug.UnauthorizedOnly do
   defp response_conn_with(conn, nil), do: conn
   defp response_conn_with(conn, {:error, _, _}), do: conn
   defp response_conn_with(conn, _) do
+    renderer = renderer()
     conn
-    |> @renderer.render(:bad_request, %{errors: %{details: "Only unauhorized access allowed!"}})
+    |> renderer.render(:bad_request, %{errors: %{details: "Only unauhorized access allowed!"}})
     |> halt
   end
+
+  defp renderer,
+    do: Application.get_env(:authable, :renderer)
 end

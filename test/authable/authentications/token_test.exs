@@ -1,13 +1,14 @@
 defmodule Authable.Authentication.TokenTest do
   use ExUnit.Case
   use Authable.Rollbackable
-  use Authable.RepoCase
+  use Authable.RepoBase
   import Authable.Factory
   alias Authable.Authentication.Token, as: TokenAuthentication
 
   @expired_token_value "expired_token_1234"
   @access_token_value "access_token_1234"
   @session_token_value "session_token_1234"
+  @deleted_user_token_value "deleted_token_1234"
 
   setup do
     user = insert(:user)

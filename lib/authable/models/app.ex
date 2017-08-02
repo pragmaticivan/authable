@@ -5,17 +5,15 @@ defmodule Authable.Model.App do
 
   use Ecto.Schema
   import Ecto.Changeset
-
-  @resource_owner Application.get_env(:authable, :resource_owner)
-  @client Application.get_env(:authable, :client)
+  alias Authable.Model.{Client, User}
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
 
   schema "apps" do
     field :scope, :string
-    belongs_to :client, @client
-    belongs_to :user, @resource_owner
+    belongs_to :client, Client
+    belongs_to :user, User
 
     timestamps()
   end

@@ -6,9 +6,8 @@ defmodule Authable.Model.Client do
   use Ecto.Schema
   import Ecto.Changeset
   alias Authable.Utils.Crypt, as: CryptUtil
+  alias Authable.Model.{App, User}
 
-  @resource_owner Application.get_env(:authable, :resource_owner)
-  @app Application.get_env(:authable, :app)
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
 
@@ -18,8 +17,8 @@ defmodule Authable.Model.Client do
     field :redirect_uri, :string
     field :settings, :map
     field :priv_settings, :map
-    belongs_to :user, @resource_owner
-    has_many :apps, @app
+    belongs_to :user, User
+    has_many :apps, App
 
     timestamps()
   end
