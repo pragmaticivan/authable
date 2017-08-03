@@ -125,6 +125,7 @@ defmodule AuthableApp do
 
   use Application
   use Authable.RepoBase
+  import Authable.Config, only: [repo: 0]
 
   def start(_type, _args) do
     import Supervisor.Spec
@@ -136,7 +137,4 @@ defmodule AuthableApp do
     opts = [strategy: :one_for_one, name: Authable.Supervisor]
     Supervisor.start_link(children, opts)
   end
-
-  defp repo,
-    do: Application.get_env(:authable, :repo)
 end

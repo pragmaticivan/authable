@@ -4,10 +4,12 @@ defmodule Authable.GrantType.ClientCredentials do
   """
 
   use Authable.RepoBase
+  import Authable.Config, only: [repo: 0, app_scopes: 0]
   import Authable.GrantType.Base
   alias Authable.GrantType.Error, as: GrantTypeError
 
   @behaviour Authable.GrantType
+  @grant_type "client_credentials"
 
   @doc """
   Authorize client for 'client owner' using client credentials.
@@ -38,7 +40,7 @@ defmodule Authable.GrantType.ClientCredentials do
   end
   def authorize(%{"client_id" => client_id, "client_secret" => client_secret}) do
     client = repo().get_by(@client, id: client_id, secret: client_secret)
-    create_tokens(client, scopes())
+    create_tokens(client, app_scopes())
   end
   def authorize(_) do
     GrantTypeError.invalid_request(
@@ -56,12 +58,12 @@ defmodule Authable.GrantType.ClientCredentials do
   defp create_oauth2_tokens({:error, err, code}, _),
     do: {:error, err, code}
   defp create_oauth2_tokens({:ok, client}, scopes),
-    do: create_oauth2_tokens(client.user_id, grant_type(), client.id, scopes)
+    do: create_oauth2_tokens(client.user_id, @grant_type, client.id, scopes)
 
   defp validate_token_scope({:ok, client}, ""),
     do: {:ok, client}
   defp validate_token_scope({:ok, client}, required_scopes) do
-    scopes = Authable.Utils.String.comma_split(scopes())
+    scopes = Authable.Utils.String.comma_split(app_scopes())
     required_scopes = Authable.Utils.String.comma_split(required_scopes)
     if Authable.Utils.List.subset?(scopes, required_scopes) do
       {:ok, client}
@@ -69,12 +71,4 @@ defmodule Authable.GrantType.ClientCredentials do
       GrantTypeError.invalid_scope(scopes)
     end
   end
-
-  defp grant_type, do: "client_credentials"
-
-  defp repo,
-    do: Application.get_env(:authable, :repo)
-
-  defp scopes,
-    do: Enum.join(Application.get_env(:authable, :scopes), ",")
 end

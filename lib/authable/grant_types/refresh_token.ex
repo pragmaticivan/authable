@@ -4,10 +4,12 @@ defmodule Authable.GrantType.RefreshToken do
   """
 
   use Authable.RepoBase
+  import Authable.Config, only: [repo: 0]
   import Authable.GrantType.Base
   alias Authable.GrantType.Error, as: GrantTypeError
 
   @behaviour Authable.GrantType
+  @grant_type "refresh_token"
 
   @doc """
   Authorize client for 'resouce owner' using client credentials and
@@ -68,7 +70,7 @@ defmodule Authable.GrantType.RefreshToken do
     do: {:error, err, code}
   defp create_oauth2_tokens({:ok, token}, required_scopes) do
     create_oauth2_tokens(
-      token.user_id, grant_type(), token.details["client_id"],
+      token.user_id, @grant_type, token.details["client_id"],
       required_scopes, token.details["redirect_uri"])
   end
 
@@ -123,9 +125,4 @@ defmodule Authable.GrantType.RefreshToken do
       {:ok, token}
     end
   end
-
-  defp grant_type, do: "refresh_token"
-
-  defp repo,
-    do: Application.get_env(:authable, :repo)
 end

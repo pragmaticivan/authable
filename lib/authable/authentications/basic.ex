@@ -5,6 +5,7 @@ defmodule Authable.Authentication.Basic do
   """
 
   use Authable.RepoBase
+  import Authable.Config, only: [repo: 0]
   alias Authable.Utils.Crypt, as: CryptUtil
 
   @behaviour Authable.Authentication
@@ -68,7 +69,4 @@ defmodule Authable.Authentication.Basic do
 
   defp error_headers,
     do: [%{"www-authenticate" => "Basic realm=\"authable\""}]
-
-  defp repo,
-    do: Application.get_env(:authable, :repo)
 end

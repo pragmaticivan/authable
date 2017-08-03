@@ -2,6 +2,7 @@ defmodule Authable.GrantType.RefreshTokenTest do
   use ExUnit.Case
   use Authable.Rollbackable
   use Authable.RepoBase
+  import Authable.Config, only: [repo: 0]
   import Authable.Factory
   alias Authable.GrantType.RefreshToken, as: RefreshTokenGrantType
 
@@ -32,7 +33,4 @@ defmodule Authable.GrantType.RefreshTokenTest do
     {:error, _, http_status} = RefreshTokenGrantType.authorize(params)
     assert http_status == :unauthorized
   end
-
-  defp repo,
-    do: Application.get_env(:authable, :repo)
 end

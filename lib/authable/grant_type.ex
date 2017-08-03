@@ -16,6 +16,6 @@ defmodule Authable.GrantType do
   This function returns a `{:ok, Authable.Model.Token struct}` or
   `{:error, Map, :http_status_code}`.
   """
-  @callback authorize(any) :: {:ok, Application.get_env(:authable,
-    :token_store)} | {:error, Map, Atom}
+  @callback authorize(any) ::
+    {:ok, Authable.Token} | {:error, Map, Atom}
 end

@@ -4,11 +4,13 @@ defmodule Authable.GrantType.Password do
   """
 
   use Authable.RepoBase
+  import Authable.Config, only: [repo: 0, app_scopes: 0]
   import Authable.GrantType.Base
   alias Authable.GrantType.Error, as: GrantTypeError
   alias Authable.Utils.Crypt, as: CryptUtil
 
   @behaviour Authable.GrantType
+  @grant_type "password"
 
   @doc """
   Authorize client for 'resouce owner' using resouce owner credentials and
@@ -43,7 +45,7 @@ defmodule Authable.GrantType.Password do
   def authorize(%{"email" => email, "password" => password, "client_id" => client_id}) do
     client = repo().get(@client, client_id)
     user = repo().get_by(@resource_owner, email: email)
-    create_tokens(client, user, password, scopes())
+    create_tokens(client, user, password, app_scopes())
   end
   def authorize(_) do
     GrantTypeError.invalid_request(
@@ -64,13 +66,13 @@ defmodule Authable.GrantType.Password do
   defp create_oauth2_tokens({:error, err, code}, _, _), do: {:error, err, code}
   defp create_oauth2_tokens({:ok, user}, client, scopes) do
     create_oauth2_tokens(
-      user.id, grant_type(), client.id, scopes, client.redirect_uri)
+      user.id, @grant_type, client.id, scopes, client.redirect_uri)
   end
 
   defp validate_token_scope({:error, err, code}, _), do: {:error, err, code}
   defp validate_token_scope({:ok, user}, ""), do: {:ok, user}
   defp validate_token_scope({:ok, user}, required_scopes) do
-    scopes = Authable.Utils.String.comma_split(scopes())
+    scopes = Authable.Utils.String.comma_split(app_scopes())
     required_scopes = Authable.Utils.String.comma_split(required_scopes)
     if Authable.Utils.List.subset?(scopes, required_scopes) do
       {:ok, user}
@@ -86,12 +88,4 @@ defmodule Authable.GrantType.Password do
       GrantTypeError.invalid_grant("Identity, password combination is wrong.")
     end
   end
-
-  defp grant_type, do: "password"
-
-  defp repo,
-    do: Application.get_env(:authable, :repo)
-
-  defp scopes,
-    do: Enum.join(Application.get_env(:authable, :scopes), ",")
 end

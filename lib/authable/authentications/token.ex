@@ -7,6 +7,7 @@ defmodule Authable.Authentication.Token do
   """
 
   use Authable.RepoBase
+  import Authable.Config, only: [repo: 0]
   alias Authable.Authentication.Error, as: AuthenticationError
 
   @behaviour Authable.Authentication
@@ -56,7 +57,4 @@ defmodule Authable.Authentication.Token do
     do: AuthenticationError.invalid_token("User not found.")
   defp resource_owner_check(resource_owner),
     do: {:ok, resource_owner}
-
-  defp repo,
-    do: Application.get_env(:authable, :repo)
 end

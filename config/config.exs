@@ -11,10 +11,6 @@ use Mix.Config
 config :authable,
   ecto_repos: [Authable.Repo],
   repo: Authable.Repo,
-  resource_owner: Authable.Model.User,
-  token_store: Authable.Model.Token,
-  client: Authable.Model.Client,
-  app: Authable.Model.App,
   expires_in: %{
     access_token: 3600,
     refresh_token: 24 * 3600,

@@ -2,6 +2,7 @@ defmodule Authable.Authorization.AppTest do
   use ExUnit.Case
   use Authable.Rollbackable
   use Authable.RepoBase
+  import Authable.Config, only: [repo: 0]
   import Authable.Factory
   import Ecto.Query, only: [where: 2]
   alias Authable.Authorization.App, as: AppAuthorization
@@ -94,7 +95,4 @@ defmodule Authable.Authorization.AppTest do
     assert Enum.count(tokens) == 0
     assert is_nil(repo().get(@app, app.id))
   end
-
-  defp repo,
-    do: Application.get_env(:authable, :repo)
 end

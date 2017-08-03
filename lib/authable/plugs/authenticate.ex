@@ -5,6 +5,7 @@ defmodule Authable.Plug.Authenticate do
   """
 
   import Plug.Conn
+  import Authable.Config, only: [renderer: 0]
   alias Authable.Helper
 
   def init(opts) do
@@ -74,7 +75,4 @@ defmodule Authable.Plug.Authenticate do
   end
   defp response_conn_with(conn, {:ok, current_user}), do: assign(conn,
     :current_user, current_user)
-
-  defp renderer,
-    do: Application.get_env(:authable, :renderer)
 end

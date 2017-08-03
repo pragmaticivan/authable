@@ -5,6 +5,7 @@ defmodule Authable.Model.Token do
 
   use Ecto.Schema
   import Ecto.Changeset
+  import Authable.Config, only: [app_scopes: 0, expires_in: 0]
   alias Authable.Utils.Crypt, as: CryptUtil
   alias Authable.Model.User
 
@@ -81,10 +82,7 @@ defmodule Authable.Model.Token do
   end
 
   defp put_app_scopes(model_changeset) do
-    scopes = Enum.join(Application.get_env(:authable, :scopes), ",")
+    scopes = app_scopes()
     put_change(model_changeset, :details, %{scope: scopes})
   end
-
-  defp expires_in,
-    do: Application.get_env(:authable, :expires_in)
 end

@@ -4,10 +4,12 @@ defmodule Authable.GrantType.AuthorizationCode do
   """
 
   use Authable.RepoBase
+  import Authable.Config, only: [repo: 0]
   import Authable.GrantType.Base
   alias Authable.GrantType.Error, as: GrantTypeError
 
   @behaviour Authable.GrantType
+  @grant_type "authorization_code"
 
   @doc """
   Authorize client for 'resource owner' using client credentials and
@@ -54,7 +56,7 @@ defmodule Authable.GrantType.AuthorizationCode do
   defp do_authorize(nil, _, _, _),
     do: GrantTypeError.invalid_client("Invalid client id or secret.")
   defp do_authorize(client, code, redirect_uri, scopes) do
-    token = repo().get_by(@token_store, value: code, name: grant_type())
+    token = repo().get_by(@token_store, value: code, name: @grant_type)
     create_tokens(token, client, redirect_uri, scopes)
   end
 
@@ -73,7 +75,7 @@ defmodule Authable.GrantType.AuthorizationCode do
   defp create_oauth2_tokens({:error, err, code}), do: {:error, err, code}
   defp create_oauth2_tokens({:ok, token}) do
     create_oauth2_tokens(
-      token.user_id, grant_type(), token.details["client_id"],
+      token.user_id, @grant_type, token.details["client_id"],
       token.details["scope"], token.details["redirect_uri"])
   end
 
@@ -134,9 +136,4 @@ defmodule Authable.GrantType.AuthorizationCode do
       {:ok, token}
     end
   end
-
-  defp grant_type, do: "authorization_code"
-
-  defp repo,
-    do: Application.get_env(:authable, :repo)
 end

@@ -3,6 +3,7 @@ defmodule Authable.Factory do
   Generates factories
   """
 
+  import Authable.Config, only: [repo: 0]
   use Authable.RepoBase
   use ExMachina.Ecto, repo: repo()
 
@@ -75,7 +76,4 @@ defmodule Authable.Factory do
       scope: "read,write"
     }
   end
-
-  defp repo,
-    do: Application.get_env(:authable, :repo)
 end

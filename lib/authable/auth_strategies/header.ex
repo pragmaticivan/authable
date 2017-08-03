@@ -5,6 +5,7 @@ defmodule Authable.AuthStrategy.Header do
   """
 
   import Plug.Conn, only: [get_req_header: 2]
+  import Authable.Config, only: [header_auth: 0]
 
   @behaviour Authable.AuthStrategy
 
@@ -42,10 +43,4 @@ defmodule Authable.AuthStrategy.Header do
       module.authenticate(header_val, required_scopes)
     end
   end
-
-  defp auth_strategies,
-    do: Application.get_env(:authable, :auth_strategies)
-
-  defp header_auth,
-    do: Map.get(auth_strategies(), :headers)
 end

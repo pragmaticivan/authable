@@ -4,6 +4,7 @@ defmodule Authable.OAuth2 do
   """
 
   use Authable.RepoBase
+  import Authable.Config, only: [app_authorization: 0, grant_types: 0]
 
   @doc """
   Calls appropriate module authorize function for given grant type.
@@ -107,12 +108,4 @@ defmodule Authable.OAuth2 do
         message: "Strategy for '#{grant_type}' is not enabled!"
     end
   end
-
-  defp app_authorization do
-    Application.get_env(:authable, :app_authorization,
-      Authable.Authorization.App)
-  end
-
-  defp grant_types,
-    do: Application.get_env(:authable, :grant_types)
 end

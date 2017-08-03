@@ -4,6 +4,7 @@ defmodule Authable.Rollbackable do
   """
 
   use ExUnit.CaseTemplate
+  import Authable.Config, only: [repo: 0]
 
   using do
     quote do
@@ -22,7 +23,4 @@ defmodule Authable.Rollbackable do
 
     :ok
   end
-
-  defp repo,
-    do: Application.get_env(:authable, :repo)
 end

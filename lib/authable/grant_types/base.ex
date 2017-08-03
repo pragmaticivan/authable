@@ -4,6 +4,7 @@ defmodule Authable.GrantType.Base do
   """
 
   use Authable.RepoBase
+  import Authable.Config, only: [repo: 0, grant_types: 0, scopes: 0]
 
   @doc """
   A common function to generate oauth2 tokens (access_token and refresh_token)
@@ -48,7 +49,7 @@ defmodule Authable.GrantType.Base do
     do: !is_nil(repo().get_by(@app, user_id: user_id, client_id: client_id))
 
   defp scopes_check(scopes) do
-    valid_scopes = Application.get_env(:authable, :scopes)
+    valid_scopes = scopes()
     desired_scopes = Authable.Utils.String.comma_split(scopes)
     Enum.each(desired_scopes, fn(scope) -> scope_check(valid_scopes, scope) end)
   end
@@ -97,10 +98,4 @@ defmodule Authable.GrantType.Base do
       {:ok, access_token} -> access_token
     end
   end
-
-  defp grant_types,
-    do: Application.get_env(:authable, :grant_types)
-
-  defp repo,
-    do: Application.get_env(:authable, :repo)
 end

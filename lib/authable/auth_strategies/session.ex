@@ -5,6 +5,7 @@ defmodule Authable.AuthStrategy.Session do
   """
 
   import Plug.Conn, only: [fetch_session: 1, get_session: 2]
+  import Authable.Config, only: [session_auth: 0]
 
   @behaviour Authable.AuthStrategy
 
@@ -29,10 +30,4 @@ defmodule Authable.AuthStrategy.Session do
       end
     end)
   end
-
-  defp auth_strategies,
-    do: Application.get_env(:authable, :auth_strategies)
-
-  defp session_auth,
-    do: Map.get(auth_strategies(), :sessions)
 end

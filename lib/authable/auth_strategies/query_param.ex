@@ -4,6 +4,8 @@ defmodule Authable.AuthStrategy.QueryParam do
   based authencations to find resource owner.
   """
 
+  import Authable.Config, only: [query_params_auth: 0]
+
   @behaviour Authable.AuthStrategy
 
   @doc """
@@ -27,10 +29,4 @@ defmodule Authable.AuthStrategy.QueryParam do
       end
     end)
   end
-
-  defp auth_strategies,
-    do: Application.get_env(:authable, :auth_strategies)
-
-  defp query_params_auth,
-    do: Map.get(auth_strategies(), :query_params)
 end

@@ -4,6 +4,7 @@ defmodule Authable.Authorization.App do
   """
 
   use Authable.RepoBase
+  import Authable.Config, only: [repo: 0, scopes: 0]
   import Ecto.Query, only: [from: 2]
 
   @doc """
@@ -110,10 +111,4 @@ defmodule Authable.Authorization.App do
     })
     Map.put(params, "token", repo().insert!(changeset))
   end
-
-  defp repo,
-    do: Application.get_env(:authable, :repo)
-
-  defp scopes,
-    do: Application.get_env(:authable, :scopes)
 end
