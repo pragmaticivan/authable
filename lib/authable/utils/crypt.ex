@@ -43,6 +43,6 @@ defmodule Authable.Utils.Crypt do
       # "ve7LXBsGqsvsXXjiFS1PVQ"
   """
   def generate_token do
-    SecureRandom.urlsafe_base64
+    SecureRandom.urlsafe_base64()
   end
 end

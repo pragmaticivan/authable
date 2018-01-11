@@ -16,9 +16,13 @@ defmodule Authable.AuthStrategy.QueryParam do
   """
   def authenticate(conn, required_scopes \\ []) do
     query_params_auth = query_params_auth()
+
     unless is_nil(query_params_auth) do
-      authenticate_via_query_params(query_params_auth, conn.query_params,
-        required_scopes)
+      authenticate_via_query_params(
+        query_params_auth,
+        conn.query_params,
+        required_scopes
+      )
     end
   end
 

@@ -38,15 +38,15 @@ defmodule Authable.Authentication.Token do
 
   defp token_check(nil, _),
     do: AuthenticationError.invalid_token("Token not found.")
+
   defp token_check(token, required_scopes) do
     if @token_store.is_expired?(token) do
       AuthenticationError.invalid_token("Token expired.")
     else
       scopes = Authable.Utils.String.comma_split(token.details["scope"])
+
       if Authable.Utils.List.subset?(scopes, required_scopes) do
-        resource_owner_check(
-          repo().get(@resource_owner, token.user_id)
-        )
+        resource_owner_check(repo().get(@resource_owner, token.user_id))
       else
         AuthenticationError.insufficient_scope(required_scopes)
       end
@@ -55,6 +55,6 @@ defmodule Authable.Authentication.Token do
 
   defp resource_owner_check(nil),
     do: AuthenticationError.invalid_token("User not found.")
-  defp resource_owner_check(resource_owner),
-    do: {:ok, resource_owner}
+
+  defp resource_owner_check(resource_owner), do: {:ok, resource_owner}
 end

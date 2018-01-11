@@ -17,5 +17,5 @@ defmodule Authable.Authentication do
   `{:error, Map, :http_status_code}`.
   """
   @callback authenticate(any, List) ::
-    {:ok, Authable.User} | {:error, Map, Atom}
+              {:ok, Authable.User} | {:error, Map, Atom}
 end

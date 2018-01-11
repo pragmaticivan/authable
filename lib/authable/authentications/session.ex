@@ -28,13 +28,16 @@ defmodule Authable.Authentication.Session do
   """
   def authenticate(session_token, required_scopes) do
     case TokenAuthentication.authenticate(
-      {"session_token", session_token}, required_scopes) do
-        {:ok, user} -> {:ok, user}
-        {:error, errors, status} -> {:error,
-          Map.put(errors, :headers, error_headers()), status}
+           {"session_token", session_token},
+           required_scopes
+         ) do
+      {:ok, user} ->
+        {:ok, user}
+
+      {:error, errors, status} ->
+        {:error, Map.put(errors, :headers, error_headers()), status}
     end
   end
 
-  defp error_headers,
-    do: [%{"www-authenticate" => "Cookie realm=\"authable\""}]
+  defp error_headers, do: [%{"www-authenticate" => "Cookie realm=\"authable\""}]
 end

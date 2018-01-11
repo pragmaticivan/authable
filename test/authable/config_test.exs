@@ -21,6 +21,7 @@ defmodule Authable.ConfigTest do
       password: Authable.GrantType.Password,
       refresh_token: Authable.GrantType.RefreshToken
     }
+
     assert grant_types == Config.grant_types()
   end
 
@@ -29,7 +30,7 @@ defmodule Authable.ConfigTest do
       headers: %{
         "authorization" => [
           {~r/Basic ([a-zA-Z\-_\+=]+)/, Authable.Authentication.Basic},
-          {~r/Bearer ([a-zA-Z\-_\+=]+)/, Authable.Authentication.Bearer},
+          {~r/Bearer ([a-zA-Z\-_\+=]+)/, Authable.Authentication.Bearer}
         ],
         "x-api-token" => [
           {~r/([a-zA-Z\-_\+=]+)/, Authable.Authentication.Bearer}
@@ -42,6 +43,7 @@ defmodule Authable.ConfigTest do
         "session_token" => Authable.Authentication.Session
       }
     }
+
     assert auth_strategies == Config.auth_strategies()
   end
 
@@ -49,12 +51,13 @@ defmodule Authable.ConfigTest do
     headers = %{
       "authorization" => [
         {~r/Basic ([a-zA-Z\-_\+=]+)/, Authable.Authentication.Basic},
-        {~r/Bearer ([a-zA-Z\-_\+=]+)/, Authable.Authentication.Bearer},
+        {~r/Bearer ([a-zA-Z\-_\+=]+)/, Authable.Authentication.Bearer}
       ],
       "x-api-token" => [
         {~r/([a-zA-Z\-_\+=]+)/, Authable.Authentication.Bearer}
       ]
     }
+
     assert headers == Config.header_auth()
   end
 
@@ -62,6 +65,7 @@ defmodule Authable.ConfigTest do
     query_params = %{
       "access_token" => Authable.Authentication.Bearer
     }
+
     assert query_params == Config.query_params_auth()
   end
 
@@ -69,6 +73,7 @@ defmodule Authable.ConfigTest do
     session_auth = %{
       "session_token" => Authable.Authentication.Session
     }
+
     assert session_auth == Config.session_auth()
   end
 
@@ -79,6 +84,7 @@ defmodule Authable.ConfigTest do
       authorization_code: 300,
       session_token: 30 * 24 * 3600
     }
+
     assert expires_in == Config.expires_in()
   end
 

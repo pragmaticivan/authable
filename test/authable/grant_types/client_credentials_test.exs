@@ -12,7 +12,9 @@ defmodule Authable.GrantType.ClientCredentialsTest do
     {:ok, [params: params]}
   end
 
-  test "oauth2 authorization with client_credentials grant type", %{params: params} do
+  test "oauth2 authorization with client_credentials grant type", %{
+    params: params
+  } do
     access_token = ClientCredentialsGrantType.authorize(params)
     refute is_nil(access_token)
     assert access_token.details[:grant_type] == "client_credentials"

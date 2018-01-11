@@ -13,8 +13,9 @@ defmodule Authable.Authentication.SessionTest do
   end
 
   test "authorize with session auth token" do
-    {:ok, authorized_user} = SessionAuthentication.authenticate(
-      @session_token_value, [])
+    {:ok, authorized_user} =
+      SessionAuthentication.authenticate(@session_token_value, [])
+
     refute is_nil(authorized_user)
   end
 end

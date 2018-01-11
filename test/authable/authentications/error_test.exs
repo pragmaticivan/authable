@@ -18,8 +18,13 @@ defmodule Authable.Authentication.ErrorTest do
 
   test "insufficient_scope" do
     required_scopes = ~w(read write)
-    expected = {:error, %{insufficient_scope:
-      "Required scopes are read, write."}, :forbidden}
+
+    expected =
+      {
+        :error,
+        %{insufficient_scope: "Required scopes are read, write."},
+        :forbidden
+      }
 
     assert expected == Error.insufficient_scope(required_scopes)
   end
