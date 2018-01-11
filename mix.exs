@@ -57,7 +57,13 @@ defmodule Authable.Mixfile do
   defp aliases do
     [
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
-      "ecto.reset": ["ecto.drop", "ecto.setup"]
+      "ecto.reset": ["ecto.drop", "ecto.setup"],
+      test: [
+        "ecto.drop -r Authable.Repo --quiet",
+        "ecto.create -r Authable.Repo --quiet",
+        "ecto.migrate -r Authable.Repo --quiet",
+        "test"
+      ]
     ]
   end
 
