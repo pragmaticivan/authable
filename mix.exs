@@ -2,21 +2,20 @@ defmodule Authable.Mixfile do
   use Mix.Project
 
   def project do
-    [
-      app: :authable,
-      version: "0.9.1",
-      elixir: "~> 1.4",
-      elixirc_paths: elixirc_paths(Mix.env()),
-      build_embedded: Mix.env() == :prod,
-      start_permanent: Mix.env() == :prod,
-      aliases: aliases(),
-      description: description(),
-      package: package(),
-      deps: deps(),
-      docs: [extras: ["README.md"]],
-      dialyzer: [plt_add_deps: :transitive],
-      test_coverage: [tool: ExCoveralls]
-    ]
+    [app: :authable,
+     version: "0.9.1",
+     elixir: "~> 1.4",
+     elixirc_paths: elixirc_paths(Mix.env),
+     build_embedded: Mix.env == :prod,
+     start_permanent: Mix.env == :prod,
+     aliases: aliases(),
+     description: description(),
+     package: package(),
+     deps: deps(),
+     docs: [extras: ["README.md"]],
+     dialyzer: [plt_add_deps: :transitive],
+     preferred_cli_env: [gandalf: :test, "coveralls": :test, "coveralls.detail": :test, "coveralls.post": :test, "coveralls.html": :test, "coveralls.json": :test],
+     test_coverage: [tool: ExCoveralls]]
   end
 
   # Configuration for the OTP application
@@ -49,7 +48,7 @@ defmodule Authable.Mixfile do
       {:credo, "~> 0.8.4", only: [:dev, :test]},
       {:ex_doc, "~> 0.16.2", only: :dev},
       {:dialyxir, "~> 0.5.1", only: [:dev], runtime: false},
-      {:excoveralls, "~> 0.7.2", only: :test}
+      {:excoveralls, "~> 0.8", only: :test}
     ]
   end
 
@@ -65,6 +64,12 @@ defmodule Authable.Mixfile do
         "ecto.create -r Authable.Repo --quiet",
         "ecto.migrate -r Authable.Repo --quiet",
         "test"
+      ],
+      "coveralls.json": [
+        "ecto.drop -r Authable.Repo --quiet",
+        "ecto.create -r Authable.Repo --quiet",
+        "ecto.migrate -r Authable.Repo --quiet",
+        "coveralls.json"
       ]
     ]
   end
