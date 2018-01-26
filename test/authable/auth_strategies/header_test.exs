@@ -10,25 +10,46 @@ defmodule Authable.AuthStrategy.HeaderTest do
     {:ok, conn: Authable.ConnTest.build_conn()}
   end
 
-  test "returns user model when authenticates with Basic Authentication using valid data", %{conn: conn} do
+  test "returns user model when authenticates with Basic Authentication using valid data",
+       %{
+         conn: conn
+       } do
     user = insert(:user)
     basic_auth_token = Base.encode64("#{user.email}:12345678")
     conn = conn |> put_req_header("authorization", "Basic #{basic_auth_token}")
     assert {:ok, user} == HeaderAuthStrategy.authenticate(conn, ~w(read))
   end
 
-  test "returns user model when authenticates with Bearer Authentication using valid data", %{conn: conn} do
+  test "returns user model when authenticates with Bearer Authentication using valid data",
+       %{
+         conn: conn
+       } do
     user = insert(:user)
     client = insert(:client, user: user)
-    token = insert(:access_token, user: user, details: %{client_id: client.id, scope: "read"})
+
+    token =
+      insert(
+        :access_token,
+        user: user,
+        details: %{client_id: client.id, scope: "read"}
+      )
+
     conn = conn |> put_req_header("authorization", "Bearer #{token.value}")
     assert {:ok, user} == HeaderAuthStrategy.authenticate(conn, ~w(read))
   end
 
-  test "returns user model when authenticates with X-API-TOKEN using valid data", %{conn: conn} do
+  test "returns user model when authenticates with X-API-TOKEN using valid data",
+       %{conn: conn} do
     user = insert(:user)
     client = insert(:client, user: user)
-    token = insert(:access_token, user: user, details: %{client_id: client.id, scope: "read"})
+
+    token =
+      insert(
+        :access_token,
+        user: user,
+        details: %{client_id: client.id, scope: "read"}
+      )
+
     conn = conn |> put_req_header("x-api-token", "#{token.value}")
     assert {:ok, user} == HeaderAuthStrategy.authenticate(conn, ~w(read))
   end

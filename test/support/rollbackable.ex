@@ -17,9 +17,9 @@ defmodule Authable.Rollbackable do
     :ok = Ecto.Adapters.SQL.Sandbox.checkout(repo())
 
     # Roll it back once we are done
-    on_exit fn ->
+    on_exit(fn ->
       Ecto.Adapters.SQL.Sandbox.mode(repo(), {:shared, self()})
-    end
+    end)
 
     :ok
   end

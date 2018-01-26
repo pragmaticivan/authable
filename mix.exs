@@ -2,19 +2,21 @@ defmodule Authable.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :authable,
-     version: "0.9.1",
-     elixir: "~> 1.4",
-     elixirc_paths: elixirc_paths(Mix.env),
-     build_embedded: Mix.env == :prod,
-     start_permanent: Mix.env == :prod,
-     aliases: aliases(),
-     description: description(),
-     package: package(),
-     deps: deps(),
-     docs: [extras: ["README.md"]],
-     dialyzer: [plt_add_deps: :transitive],
-     test_coverage: [tool: ExCoveralls]]
+    [
+      app: :authable,
+      version: "0.9.1",
+      elixir: "~> 1.4",
+      elixirc_paths: elixirc_paths(Mix.env()),
+      build_embedded: Mix.env() == :prod,
+      start_permanent: Mix.env() == :prod,
+      aliases: aliases(),
+      description: description(),
+      package: package(),
+      deps: deps(),
+      docs: [extras: ["README.md"]],
+      dialyzer: [plt_add_deps: :transitive],
+      test_coverage: [tool: ExCoveralls]
+    ]
   end
 
   # Configuration for the OTP application
@@ -75,10 +77,12 @@ defmodule Authable.Mixfile do
   end
 
   defp package do
-    [name: :authable,
-     files: ["lib", "priv", "mix.exs", "README.md"],
-     maintainers: ["Mustafa Turan"],
-     licenses: ["MIT"],
-     links: %{"GitHub" => "https://github.com/mustafaturan/authable"}]
+    [
+      name: :authable,
+      files: ["lib", "priv", "mix.exs", "README.md"],
+      maintainers: ["Mustafa Turan"],
+      licenses: ["MIT"],
+      links: %{"GitHub" => "https://github.com/mustafaturan/authable"}
+    ]
   end
 end

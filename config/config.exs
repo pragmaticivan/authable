@@ -27,7 +27,7 @@ config :authable,
     headers: %{
       "authorization" => [
         {~r/Basic ([a-zA-Z\-_\+=]+)/, Authable.Authentication.Basic},
-        {~r/Bearer ([a-zA-Z\-_\+=]+)/, Authable.Authentication.Bearer},
+        {~r/Bearer ([a-zA-Z\-_\+=]+)/, Authable.Authentication.Bearer}
       ],
       "x-api-token" => [
         {~r/([a-zA-Z\-_\+=]+)/, Authable.Authentication.Bearer}
@@ -62,5 +62,5 @@ config :authable,
 # Configuration from the imported file will override the ones defined
 # here (which is why it is important to import them last).
 #
-if Enum.any?(~w(dev test docs)a, fn(env) -> Mix.env == env end),
-do: import_config "#{Mix.env}.exs"
+if Enum.any?(~w(dev test docs)a, fn env -> Mix.env() == env end),
+  do: import_config("#{Mix.env()}.exs")

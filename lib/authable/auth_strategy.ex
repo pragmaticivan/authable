@@ -17,5 +17,5 @@ defmodule Authable.AuthStrategy do
   `{:error, Map, :http_status_code}` or nil.
   """
   @callback authenticate(any, List) ::
-    {:ok, Authable.User} | {:error, Map, Atom} | nil
+              {:ok, Authable.User} | {:error, Map, Atom} | nil
 end

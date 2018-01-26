@@ -30,14 +30,20 @@ defmodule Authable.Authentication.Bearer do
   """
   def authenticate(%{"access_token" => access_token}, required_scopes),
     do: authenticate(access_token, required_scopes)
+
   def authenticate("Bearer " <> access_token, required_scopes),
     do: authenticate(access_token, required_scopes)
+
   def authenticate(access_token, required_scopes) do
     case TokenAuthentication.authenticate(
-      {"access_token", access_token}, required_scopes) do
-        {:ok, user} -> {:ok, user}
-        {:error, errors, status} -> {:error,
-          Map.put(errors, :headers, error_headers(errors)), status}
+           {"access_token", access_token},
+           required_scopes
+         ) do
+      {:ok, user} ->
+        {:ok, user}
+
+      {:error, errors, status} ->
+        {:error, Map.put(errors, :headers, error_headers(errors)), status}
     end
   end
 
@@ -51,6 +57,7 @@ defmodule Authable.Authentication.Bearer do
       errors
       |> Map.to_list()
       |> List.first()
+
     "error=\"#{error}\", error_description=\"#{error_message}\""
   end
 end
